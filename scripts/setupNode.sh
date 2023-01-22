@@ -25,7 +25,6 @@ installPackages() {
   message "STATE: Updating system and installing packages"
   sudo apt-get update -q > /dev/null
   sudo apt-get upgrade -qy > /dev/null
-  sudo apt-get install -qy curl jq nfs-common open-iscsi > /dev/null
   sudo apt-get autoremove -qy > /dev/null
 }
 
@@ -61,10 +60,7 @@ installApps() {
   message "STATE: Creating starter namespaces"
   kubectl apply -f ../cluster/namespaces/namespaces.yaml
 
-  message "STATE: Applying cluster base"
-  kubectl apply -f ../cluster/base/cluster.yaml
-
-  message "STATE: Applying cluster dashboard"
+  message "STATE: Creating traefik-dashboard"
   kubectl apply -f ../cluster/apps/dashboard/dashboard.yaml
 }
 

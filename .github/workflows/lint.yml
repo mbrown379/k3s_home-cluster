@@ -1,0 +1,29 @@
+name: lint
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  lint:
+    name: Lint
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the codebase
+        uses: actions/checkout@v3
+
+      - name: Run yamllint
+        run: |
+          python3 --version
+          pip3 install --user yamllint
+          yamllint --version
+          yamllint .
+
+      - name: Run shellcheck
+        run: |
+          shellcheck --version
+          grep -rl '^#!/.*sh' * | xargs -n1 shellcheck -x
