@@ -1,4 +1,5 @@
-name: lint
+---
+name: yamllint
 
 on:
   push:
@@ -22,8 +23,3 @@ jobs:
           pip3 install --user yamllint
           yamllint --version
           yamllint .
-
-      - name: Run shellcheck
-        run: |
-          shellcheck --version
-          grep -rl '^#!/.*sh' * | xargs -n1 shellcheck -x
