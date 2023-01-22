@@ -1,0 +1,3 @@
+*.lock
+*/.env
+*/config.json
