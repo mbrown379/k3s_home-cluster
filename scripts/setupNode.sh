@@ -23,14 +23,14 @@ userCheck() {
 
 installPackages() {
   message "STATE: Updating system and installing packages"
-  sudo apt-get update -q > /dev/null
-  sudo apt-get upgrade -qy > /dev/null
-  sudo apt-get autoremove -qy > /dev/null
+  sudo apt-get update -q
+  sudo apt-get upgrade -qy
+  sudo apt-get autoremove -qy
 }
 
 installK3s() {
   message "STATE: Installing K3s"
-  curl -sSL https://get.k3s.io | sh -
+  curl -sSL https://get.k3s.io | sh -s - server --cluster-init
 
   message "STATE: Sleeping for 15s"
   sleep 15
@@ -46,14 +46,6 @@ installK3s() {
   kubectl cluster-info
 
   message "STATE: Your kubeconfig is located at:   $HOME/.kube/config"
-
-  if [[ -x "$(command -v /usr/sbin/ufw)" ]]; then
-    message "STATE: UFW is installed, opening 6443/tcp"
-    sudo ufw allow 6443/tcp > /dev/null
-    sudo ufw reload > /dev/null
-  else
-    message "ERROR: UFW was not found, please make sure 6443/tcp is open"
-  fi
 }
 
 installApps() {
@@ -65,7 +57,7 @@ installApps() {
 }
 
 userCheck
-installPackages
+# installPackages
 installK3s
 installApps
 
