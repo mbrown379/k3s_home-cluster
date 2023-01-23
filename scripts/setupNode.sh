@@ -21,7 +21,7 @@ userCheck() {
   fi
 }
 
-installPackages() {
+updatePackages() {
   message "STATE: Updating system and installing packages"
   sudo apt-get update -q
   sudo apt-get upgrade -qy
@@ -48,15 +48,20 @@ installK3s() {
 }
 
 installApps() {
+  message "STATE: Installing CRDs"
+  kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v2.9/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml
+  kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v2.9/docs/content/reference/dynamic-configuration/kubernetes-crd-rbac.yml
+
   message "STATE: Creating starter namespaces"
   kubectl apply -f ../cluster/namespaces/namespaces.yaml
 
   message "STATE: Registering traefik dashboard"
-  kubectl apply -f ../cluster/dashboard/dashboard.yaml
+  kubectl apply -f ../cluster/apps/dashboard/dashboard-auth-secret.yaml
+  kubectl apply -f ../cluster/apps/dashboard/dashboard.yaml
 }
 
 userCheck
-# installPackages
+# updatePackages
 installK3s
 installApps
 
