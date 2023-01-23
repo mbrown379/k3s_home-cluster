@@ -58,6 +58,9 @@ installApps() {
   message "STATE: Registering traefik dashboard"
   kubectl apply -f ../cluster/apps/dashboard/dashboard-auth-secret.yaml
   kubectl apply -f ../cluster/apps/dashboard/dashboard.yaml
+
+  message "STATE: Launching codeserver"
+  kubectl apply -f ../cluster/apps/codeserver/codeserver.yaml
 }
 
 userCheck
