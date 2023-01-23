@@ -35,12 +35,11 @@ installK3s() {
   message "STATE: Sleeping for 15s"
   sleep 15
 
-  message "STATE: Copying your kubeconfig file"
-  mkdir -p "$HOME"/.kube
-  sudo cp /etc/rancher/k3s/k3s.yaml "$HOME"/.kube/config
-  sudo chown "$(id -u)":"$(id -g)" "$HOME"/.kube/config
-  sed -i -e "s/127.0.0.1/$(hostname --fqdn)/g" "$HOME"/.kube/config
-  export KUBECONFIG="$HOME"/.kube/config
+  message "STATE: Creating kubeconfig file"
+  export KUBECONFIG=~/.kube/config
+  mkdir ~/.kube 2> /dev/null
+  sudo k3s kubectl config view --raw > "$KUBECONFIG"
+  chmod 600 "$KUBECONFIG"
 
   message "STATE: Getting cluster info"
   kubectl cluster-info
@@ -52,8 +51,8 @@ installApps() {
   message "STATE: Creating starter namespaces"
   kubectl apply -f ../cluster/namespaces/namespaces.yaml
 
-  message "STATE: Creating traefik-dashboard"
-  kubectl apply -f ../cluster/apps/dashboard/dashboard.yaml
+  message "STATE: Registering traefik dashboard"
+  kubectl apply -f ../cluster/dashboard/dashboard.yaml
 }
 
 userCheck
