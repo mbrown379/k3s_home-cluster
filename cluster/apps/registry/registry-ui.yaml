@@ -1,0 +1,56 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: registry-ui-deployment
+  namespace: registry
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: registry-ui
+  template:
+    metadata:
+      labels:
+        app: registry-ui
+    spec:
+      containers:
+        - name: registry-ui
+          image: joxit/docker-registry-ui
+          ports:
+            - containerPort: 80
+          env:
+            - name: SINGLE_REGISTRY
+              value: "true"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: registry-ui-service
+  namespace: registry
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      targetPort: 80
+      port: 80
+      protocol: TCP
+  selector:
+    app: registry-ui
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: registry-ui-ingress
+  namespace: registry
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: PathPrefix(`/registry`)
+      kind: Rule
+      services:
+        - name: registry-ui-service
+          kind: Service
+          port: 80

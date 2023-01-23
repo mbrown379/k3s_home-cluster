@@ -18,7 +18,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: PathPrefix(`/dashboard`)
+    - match: PathPrefix(`/dashboard`) || PathPrefix(`/api`)
       kind: Rule
       middlewares:
         - name: dashboard-ingress-auth

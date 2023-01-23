@@ -1,0 +1,73 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: registry-data-pvc
+  namespace: registry
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: registry-deployment
+  namespace: registry
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: registry
+  template:
+    metadata:
+      labels:
+        app: registry
+    spec:
+      containers:
+        - name: registry
+          image: registry:2.8.1
+          ports:
+            - containerPort: 5000
+          env:
+            - name: REGISTRY_STORAGE_DELETE_ENABLED
+              value: "true"
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/registry
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: registry-data-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: registry-service
+  namespace: registry
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      targetPort: 5000
+      port: 5000
+      protocol: TCP
+  selector:
+    app: registry
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: registry-ingress
+  namespace: registry
+spec:
+  routes:
+    - match: PathPrefix(`/registry`)
+      kind: Rule
+      services:
+        - name: registry-service
+          kind: Service
+          port: 5000

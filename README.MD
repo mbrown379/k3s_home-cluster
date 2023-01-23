@@ -6,5 +6,5 @@ My home K3s single-node cluster defined as code
 
 - [x] Fix local testing environment
 - [x] Secure dashboard route
-- [] Add codeserver
+- [x] Add codeserver
 - [] Add docker registry service (server + UI)

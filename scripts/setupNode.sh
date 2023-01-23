@@ -55,12 +55,16 @@ installApps() {
   message "STATE: Creating starter namespaces"
   kubectl apply -f ../cluster/namespaces/namespaces.yaml
 
-  message "STATE: Registering traefik dashboard"
+  message "STATE: Registering Traefik dashboard"
   kubectl apply -f ../cluster/apps/dashboard/dashboard-auth-secret.yaml
   kubectl apply -f ../cluster/apps/dashboard/dashboard.yaml
 
-  message "STATE: Launching codeserver"
+  message "STATE: Starting Visual Studio Code remote server"
   kubectl apply -f ../cluster/apps/codeserver/codeserver.yaml
+
+  message "STATE: Creating Docker registry"
+  kubectl apply -f ../cluster/apps/registry/registry.yaml
+  kubectl apply -f ../cluster/apps/registry/registry-ui.yaml
 }
 
 userCheck
